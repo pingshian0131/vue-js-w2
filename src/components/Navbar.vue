@@ -46,7 +46,7 @@ export default {
 
 <template>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
+    <div class="container">
       <a class="navbar-brand" href="#">
         <img src="/favicon.ico" alt="" width="30" height="24" class="d-inline-block align-text-top">
         Login

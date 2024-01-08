@@ -16,7 +16,7 @@ export default {
     return {
       isLogin: this.loginStatus,
       page: 'product',
-      token: document.cookie.split(';')[0].split('=')[1],
+      token: /; token=([^;]+)/.exec(document.cookie) && /; token=([^;]+)/.exec(document.cookie)[1],
       products: [
         {
           category: "甜甜圈",
@@ -100,7 +100,7 @@ export default {
 </script>
 
 <template>
-  <Navbar :login-status=loginStatus :page="page"></Navbar>
+  <Navbar :login-status=isLogin :page="page"></Navbar>
   <div class="container">
     <div class="row py-3">
       <div class="col-md-6" id="product-list">

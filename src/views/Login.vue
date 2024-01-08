@@ -9,13 +9,13 @@ export default {
   props: {
     loginStatus: {
       type: Number,
-      default: -1,
+      default: 0,
     }
   },
   data() {
     return {
       isLogin: this.loginStatus,
-      token: document.cookie.split(';')[0].split('=')[1],
+      token: /; token=([^;]+)/.exec(document.cookie) && /; token=([^;]+)/.exec(document.cookie)[1],
       page: 'index',
       username: '',
       password: '',
@@ -25,7 +25,10 @@ export default {
     if (this.token) {
       axios.defaults.headers.common.authorization = this.token;
       this.checkUserStatus();
+    } else {
+      this.isLogin = -1;
     }
+
   },
   methods: {
     login() {
@@ -59,13 +62,12 @@ export default {
 </script>
 
 <template>
-  <Navbar :loginStatus="loginStatus" :page="page"></Navbar>
+  <Navbar :loginStatus="isLogin" :page="page"></Navbar>
   <div class="container">
-    <template v-if="loginStatus === 0">
+    <template v-if="isLogin === 0">
       <Loading/>
     </template>
-    <template v-else-if="loginStatus === -1">
-
+    <template v-else-if="isLogin === -1">
       <div class="row justify-content-center mb-5">
         <h1 class="h3 mb-3 font-weight-normal">
           請先登入
