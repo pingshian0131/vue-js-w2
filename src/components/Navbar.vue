@@ -1,7 +1,7 @@
 <script>
 import axios from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_BASE_URL;
+const API_BASE_URL = import.meta.env.VITE_BASE_API_URL;
 
 export default {
   props: {
@@ -21,20 +21,20 @@ export default {
   },
   data() {
     return {
-      token: document.cookie.split(';')[0].split('=')[1],
+      accessToken: /accessToken=([^;]+)/.exec(document.cookie) && /accessToken=([^;]+)/.exec(document.cookie)[1],
     }
   },
   created() {
   },
   methods: {
     logout() {
-      axios.defaults.headers.common.authorization = this.token;
+      axios.defaults.headers.common.authorization = this.accessToken;
       axios.post(`${API_BASE_URL}v2/logout`).then((res) => {
         console.log(res);
       }).catch((err) => {
         console.log(err);
       })
-      document.cookie = `token=; expires=${new Date()}; path=/`;
+      document.cookie = `accessToken=; expires=${new Date()}; path=/`;
       window.location.href = '/';
     },
     isDisabled(link) {
@@ -49,7 +49,7 @@ export default {
     <div class="container">
       <a class="navbar-brand" href="#">
         <img src="/favicon.ico" alt="" width="30" height="24" class="d-inline-block align-text-top">
-        Login
+        Home
       </a>
       <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav">

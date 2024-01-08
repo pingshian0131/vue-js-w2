@@ -3,7 +3,7 @@ import axios from 'axios';
 import Navbar from "@/components/Navbar.vue";
 import Loading from "@/components/Loading.vue";
 
-const API_BASE_URL = import.meta.env.VITE_BASE_URL;
+const API_BASE_URL = import.meta.env.VITE_BASE_API_URL;
 export default {
   components: {Loading, Navbar},
   props: {
@@ -15,15 +15,15 @@ export default {
   data() {
     return {
       isLogin: this.loginStatus,
-      token: /; token=([^;]+)/.exec(document.cookie) && /; token=([^;]+)/.exec(document.cookie)[1],
+      accessToken: /; accessToken=([^;]+)/.exec(document.cookie) && /; accessToken=([^;]+)/.exec(document.cookie)[1],
       page: 'index',
       username: '',
       password: '',
     }
   },
   created() {
-    if (this.token) {
-      axios.defaults.headers.common.authorization = this.token;
+    if (this.accessToken) {
+      axios.defaults.headers.common.authorization = this.accessToken;
       this.checkUserStatus();
     } else {
       this.isLogin = -1;
@@ -39,9 +39,9 @@ export default {
       }
       axios.post(url, user).then((res) => {
         console.log(res);
-        const token = res.data.token;
+        const accessToken = res.data.token;
         const expired = res.data.expired;
-        document.cookie = `token=${token}; expires=${new Date(expired)}; path=/`;
+        document.cookie = `accessToken=${accessToken}; expires=${new Date(expired)}; path=/`;
         window.location.href = '/#/admin';
       }).catch((err) => {
         console.log(err);
