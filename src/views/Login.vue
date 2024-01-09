@@ -6,15 +6,9 @@ import Loading from "@/components/Loading.vue";
 const API_BASE_URL = import.meta.env.VITE_BASE_API_URL;
 export default {
   components: {Loading, Navbar},
-  props: {
-    loginStatus: {
-      type: Number,
-      default: 0,
-    }
-  },
   data() {
     return {
-      isLogin: this.loginStatus,
+      isLogin: 0,
       accessToken: /; accessToken=([^;]+)/.exec(document.cookie) && /; accessToken=([^;]+)/.exec(document.cookie)[1],
       page: 'index',
       username: '',
@@ -22,13 +16,12 @@ export default {
     }
   },
   created() {
-    if (this.accessToken) {
+    if (!this.accessToken) {
+      this.isLogin = -1;
+    } else {
       axios.defaults.headers.common.authorization = this.accessToken;
       this.checkUserStatus();
-    } else {
-      this.isLogin = -1;
     }
-
   },
   methods: {
     login() {
@@ -55,6 +48,8 @@ export default {
       }).catch((err) => {
         console.log(err);
         this.isLogin = -1;
+        alert('請重新登入!');
+        window.location.reload();
       })
     },
   }
@@ -62,7 +57,7 @@ export default {
 </script>
 
 <template>
-  <Navbar :loginStatus="isLogin" :page="page"></Navbar>
+  <Navbar :login-status="isLogin" :page="page"></Navbar>
   <div class="container">
     <template v-if="isLogin === 0">
       <Loading/>

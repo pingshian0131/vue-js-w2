@@ -12,9 +12,6 @@ export default {
     page: {
       type: String,
     },
-    _class: {
-      type: String,
-    }
   },
   setup(props) {
     // console.log(props.loginStatus)
@@ -53,7 +50,7 @@ export default {
       </a>
       <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav">
-          <li class="nav-item">
+          <li class="nav-item" v-if="loginStatus === 1">
             <a :class="'nav-link ' + isDisabled('product')" href="#/product">Product</a>
           </li>
           <li class="nav-item" v-if="loginStatus === 1">

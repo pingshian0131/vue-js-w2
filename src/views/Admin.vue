@@ -3,7 +3,6 @@ import {Modal} from 'bootstrap';
 import axios from 'axios';
 import Navbar from "@/components/Navbar.vue";
 import Loading from "@/components/Loading.vue";
-import product from "./Product.vue";
 
 const API_BASE_URL = import.meta.env.VITE_BASE_API_URL;
 const API_PATH = import.meta.env.VITE_API_PATH;
@@ -12,25 +11,10 @@ const ADD_PRODUCT_URL = `${API_BASE_URL}v2/api/${API_PATH}/admin/product`;
 const EDIT_PRODUCT_URL = `${API_BASE_URL}v2/api/${API_PATH}/admin/product`;
 
 export default {
-  computed: {
-    product() {
-      return product
-    }
-  },
   components: {Loading, Navbar},
-  props: {
-    loginStatus: {
-      type: Number,
-      default: -1,
-    },
-    _class: {
-      type: String,
-      default: "nav-link disabled",
-    }
-  },
   data() {
     return {
-      isLogin: this.loginStatus,
+      isLogin: -1,
       page: 'admin',
       accessToken: /accessToken=([^;]+)/.exec(document.cookie) && /accessToken=([^;]+)/.exec(document.cookie)[1],
       addProductData: {
@@ -126,10 +110,12 @@ export default {
       products: [],
       editTargetProduct: null,
       viewTargetImage: null,
+      getProductsSuccess: 0,
     }
   },
   created() {
     if (!this.accessToken) {
+      alert('請先登入!');
       window.location.href = '/';
     }
     axios.defaults.headers.common.authorization = this.accessToken;
@@ -139,18 +125,17 @@ export default {
   methods: {
     getAllProducts() {
       axios.get(`${API_BASE_URL}v2/api/${API_PATH}/admin/products/all`).then((res) => {
-        console.log(res);
         this.products = res.data.products;
+        this.getProductsSuccess = 1;
       }).catch((err) => {
         console.log(err);
+        this.getProductsSuccess = -1;
       })
     },
     submitAddProduct(e) {
       const btn = e.target;
       btn.disabled = true;
-      console.log(this.addProductData)
       axios.post(ADD_PRODUCT_URL, this.addProductData).then((res) => {
-        console.log(res);
         if (res.data.success === true) {
           alert('新增成功!');
           window.location.reload();
@@ -164,8 +149,6 @@ export default {
     submitEditProduct(e) {
       const btn = e.target;
       btn.disabled = true;
-      console.log(this.editTargetProduct)
-      console.log(this.editTargetProduct.id)
       this.editTargetProduct.origin_price = parseInt(this.editTargetProduct.origin_price);
       this.editTargetProduct.price = parseInt(this.editTargetProduct.price);
       const data = {
@@ -185,7 +168,6 @@ export default {
     },
     editProduct(id) {
       this.editTargetProduct = this.products[id];
-      console.log(this.editTargetProduct)
     },
     checkUserStatus() {
       this.isLogin = 0;
@@ -204,7 +186,6 @@ export default {
       }
     },
     viewImage(e) {
-      console.log(e.target)
       this.viewTargetImage = e.target.src;
       let myModal = new Modal(document.getElementById('viewImageModal'));
       myModal.show();
@@ -214,14 +195,14 @@ export default {
 </script>
 
 <template>
-  <Navbar :login-status=isLogin :page="page" :_class="_class"></Navbar>
+  <Navbar :login-status=isLogin :page="page"></Navbar>
   <div class="container mt-5" v-if="isLogin === 1">
     <div class="row mt-3">
       <div class="col-auto">
         <h1>Admin</h1>
       </div>
     </div>
-    <div class="row justify-content-start mb-5 mt-3">
+    <div class="row justify-content-start mb-5 mt-3" v-if="getProductsSuccess">
       <!-- tab nav-link -->
       <div class="col-2">
         <div class="d-flex align-items-start">
@@ -360,12 +341,15 @@ export default {
         </div>
       </div>
     </div>
-  </div>
-  <div class="container" v-else-if="isLogin === 0">
-    <Loading/>
+    <div class="row justify-content-start mb-5 mt-3" v-else-if="getProductsSuccess === 0">
+      <Loading />
+    </div>
+    <div class="row justify-content-start mb-5 mt-3" v-else>
+      <h1>API Server Error</h1>
+    </div>
   </div>
   <div class="container" v-else>
-    <h1>請先登入</h1>
+    <Loading/>
   </div>
 
   <!-- Add Product Modal -->

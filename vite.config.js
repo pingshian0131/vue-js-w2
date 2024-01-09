@@ -15,9 +15,6 @@ export default defineConfig({
         }
     },
     define: {
-        'process.env': {
-            // 'VITE_API_PATH': '691fefed-6ac2-4e54-a946-30675c44d934',
-            // 'VITE_BASE_API_URL': 'https://ec-course-api.hexschool.io/',
-        },
+        'process.env': {},
     }
 })
