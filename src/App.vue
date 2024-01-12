@@ -19,8 +19,6 @@ window.addEventListener('hashchange', () => {
 })
 
 const currentView = computed(() => {
-  // let NotFound = { template: '<p>Page not found</p>' };
-  console.log(routes[currentPath.value.slice(1) || '/'] || NotFound)
   return routes[currentPath.value.slice(1) || '/'] || NotFound
 })
 </script>

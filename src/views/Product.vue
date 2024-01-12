@@ -1,5 +1,4 @@
 <script>
-import axios from "axios";
 import Navbar from "@/components/Navbar.vue";
 import Loading from "@/components/Loading.vue";
 
@@ -24,7 +23,7 @@ export default {
       alert('請先登入!');
       window.location.href = '/';
     }
-    axios.defaults.headers.common.authorization = this.accessToken;
+    this.$axios.defaults.headers.common.authorization = this.accessToken;
     this.getAllProducts();
     if (this.accessToken) {
       this.checkUserStatus();
@@ -35,7 +34,7 @@ export default {
   },
   methods: {
     getAllProducts() {
-      axios.get(`${API_BASE_URL}v2/api/${API_PATH}/admin/products/all`).then((res) => {
+      this.$axios.get(`${API_BASE_URL}v2/api/${API_PATH}/admin/products/all`).then((res) => {
         this.productsMap = res.data.products;
         let productData = null;
         for (let key in this.productsMap) {
@@ -54,7 +53,7 @@ export default {
     },
     checkUserStatus() {
       this.isLogin = 0;
-      axios.post(`${API_BASE_URL}v2/api/user/check`).then(() => {
+      this.$axios.post(`${API_BASE_URL}v2/api/user/check`).then(() => {
         this.isLogin = 1;
       }).catch((err) => {
         console.log(err);

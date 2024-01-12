@@ -1,5 +1,4 @@
 <script>
-import axios from 'axios';
 import Navbar from "@/components/Navbar.vue";
 import Loading from "@/components/Loading.vue";
 
@@ -19,7 +18,7 @@ export default {
     if (!this.accessToken) {
       this.isLogin = -1;
     } else {
-      axios.defaults.headers.common.authorization = this.accessToken;
+      this.$axios.defaults.headers.common.authorization = this.accessToken;
       this.checkUserStatus();
     }
   },
@@ -30,19 +29,23 @@ export default {
         username: this.username,
         password: this.password,
       }
-      axios.post(url, user).then((res) => {
-        console.log(res);
-        const accessToken = res.data.token;
-        const expired = res.data.expired;
-        document.cookie = `accessToken=${accessToken}; expires=${new Date(expired)}; path=/`;
-        window.location.href = '/#/admin';
+      this.$axios.post(url, user).then((res) => {
+        if (res.data.success) {
+          const accessToken = res.data.token;
+          const expired = res.data.expired;
+          document.cookie = `accessToken=${accessToken}; expires=${new Date(expired)}; path=/`;
+          window.location.href = '/#/admin';
+        } else {
+          alert(res.data.message);
+          window.location.reload();
+        }
       }).catch((err) => {
         console.log(err);
       })
     },
     checkUserStatus() {
       this.isLogin = 0;
-      axios.post(`${API_BASE_URL}v2/api/user/check`).then(() => {
+      this.$axios.post(`${API_BASE_URL}v2/api/user/check`).then(() => {
         this.isLogin = 1;
         window.location.href = '/#/admin';
       }).catch((err) => {

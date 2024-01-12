@@ -1,6 +1,5 @@
 <script>
 import {Modal} from 'bootstrap';
-import axios from 'axios';
 import Navbar from "@/components/Navbar.vue";
 import Loading from "@/components/Loading.vue";
 
@@ -118,13 +117,13 @@ export default {
       alert('請先登入!');
       window.location.href = '/';
     }
-    axios.defaults.headers.common.authorization = this.accessToken;
+    this.$axios.defaults.headers.common.authorization = this.accessToken;
     this.checkUserStatus();
     this.getAllProducts();
   },
   methods: {
     getAllProducts() {
-      axios.get(`${API_BASE_URL}v2/api/${API_PATH}/admin/products/all`).then((res) => {
+      this.$axios.get(`${API_BASE_URL}v2/api/${API_PATH}/admin/products/all`).then((res) => {
         this.products = res.data.products;
         this.getProductsSuccess = 1;
       }).catch((err) => {
@@ -135,7 +134,7 @@ export default {
     submitAddProduct(e) {
       const btn = e.target;
       btn.disabled = true;
-      axios.post(ADD_PRODUCT_URL, this.addProductData).then((res) => {
+      this.$axios.post(ADD_PRODUCT_URL, this.addProductData).then((res) => {
         if (res.data.success === true) {
           alert('新增成功!');
           window.location.reload();
@@ -154,8 +153,7 @@ export default {
       const data = {
         "data": this.editTargetProduct,
       }
-      axios.put(`${EDIT_PRODUCT_URL}/${this.editTargetProduct.id}`, data).then((res) => {
-        console.log(res);
+      this.$axios.put(`${EDIT_PRODUCT_URL}/${this.editTargetProduct.id}`, data).then((res) => {
         if (res.data.success === true) {
           alert('編輯成功!');
           window.location.reload();
@@ -171,7 +169,7 @@ export default {
     },
     checkUserStatus() {
       this.isLogin = 0;
-      axios.post(`${API_BASE_URL}v2/api/user/check`).then(() => {
+      this.$axios.post(`${API_BASE_URL}v2/api/user/check`).then(() => {
         this.isLogin = 1;
       }).catch((err) => {
         console.log(err);
